@@ -1,6 +1,8 @@
-# nap_guardian
+# 2023_HCI_7
+# Nap Guardian
 
 A new Flutter project.
+This repository is for Human Computer Interaction Class.
 
 ## Getting Started
 
