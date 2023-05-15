@@ -1,6 +1,22 @@
 # 2023_HCI_7
 # Nap Guardian
 
+## Features
+
+- Detect face on real-time
+- Detect face landmark on real-time
+- Detect hand on real-time
+- Estimate body pose on real-time
+- Visualize inference results
+
+| Face Detection | Face Mesh |
+| :----: | :----: |
+| <img src="assets/images/smile_blue.png"> | <img src="assets/images/smile_yellow.png"> |
+
+| Hand Detection | Pose Estimation |
+| :----: | :----: |
+| <img src="assets/images/hand_green.png"> | <img src="assets/images/pose_red.png"> |
+
 A new Flutter project.
 This repository is for Human Computer Interaction Class.
 
