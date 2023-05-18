@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:hp/pages/camera.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hp/utils/mlkit_utils.dart';
+import 'package:camerawesome/camerawesome_plugin.dart';
+import 'package:camerawesome/pigeon.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:rxdart/rxdart.dart';
 
 class MyTimer extends StatefulWidget {
   final String breakTime;
@@ -259,45 +268,54 @@ class _TimerState extends State<MyTimer> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Stack(
-              children: [
-                Container(
-                  width: 300,
-                  height: 300,
-                  child: CircularProgressIndicator(
-                    color: Colors.orangeAccent,
-                    backgroundColor: Colors.black,
-                    value: _time.inSeconds /
-                        (_currMax *
-                            60), // calculates the progress as a value between 0 and 1
-                    strokeWidth: 2,
-                  ),
-                ),
-                Positioned(
-                  top: 100,
-                  left: 70,
-                  child: Text(
-                    '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
-                    style: const TextStyle(
-                      fontSize: 60,
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: CameraPage(),
+            ),
+            Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: Stack(
+                children: [
+                  Container(
+                    width: 300,
+                    height: 300,
+                    child: CircularProgressIndicator(
                       color: Colors.orangeAccent,
-                      fontFamily: 'Arial',
+                      backgroundColor: Colors.black,
+                      value: _time.inSeconds /
+                          (_currMax *
+                              60), // calculates the progress as a value between 0 and 1
+                      strokeWidth: 2,
                     ),
                   ),
-                ),
-                Positioned(
-                  bottom: 100,
-                  left: 130,
-                  child: Text(
-                    timerState,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.orangeAccent,
-                      fontFamily: 'Arial',
+                  Positioned(
+                    top: 100,
+                    left: 70,
+                    child: Text(
+                      '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
+                      style: const TextStyle(
+                        fontSize: 60,
+                        color: Colors.orangeAccent,
+                        fontFamily: 'Arial',
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    bottom: 100,
+                    left: 130,
+                    child: Text(
+                      timerState,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        color: Colors.orangeAccent,
+                        fontFamily: 'Arial',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
