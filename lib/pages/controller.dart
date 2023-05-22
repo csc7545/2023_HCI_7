@@ -23,10 +23,14 @@ class faceController extends GetxController {
   void clear(){
     _timeCount = 0;
     _isstopwatchRunning = false;
+    _stopwatchpause();
+    dispose();
   }
+
   void stoping(){
     _isstopwatchRunning = false;
     _stopwatchpause();
+    update();
   }
 
   void increase(){
@@ -41,10 +45,10 @@ class faceController extends GetxController {
   }
 
 
-  //
+
   void _stopwatchstart() {
     if(_isstopwatchRunning == true)
-      _stopwatch = Timer.periodic(Duration(milliseconds: 1000), (timer) {
+      _stopwatch = Timer.periodic(Duration(seconds: 100000), (timer) {
         // setState(() {
         increase();
         // });
@@ -53,7 +57,8 @@ class faceController extends GetxController {
 
   void _stopwatchpause() {
     if(_isstopwatchRunning == false)
-      _stopwatch?.cancel();
+      _stopwatch!.cancel();
+    update();
   }
 
 }

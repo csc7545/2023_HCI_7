@@ -26,11 +26,11 @@ final fController = Get.put(faceController());
 
 
 // var faceModel;
-late Timer _stopwatch;
-int _timeCount = 0;
-bool _isstopwatchRunning = false;
-List<String> _lapTimeList = [];
-SharedPreferences? _prefs;
+// late Timer _stopwatch;
+// int _timeCount = 0;
+// bool _isstopwatchRunning = false;
+// List<String> _lapTimeList = [];
+// SharedPreferences? _prefs;
 
 
 class _CameraPageState extends State<CameraPage> {
@@ -196,7 +196,7 @@ class FaceDetectorPainter extends CustomPainter {
 
 
 
-  FaceModel? extractFaceInfo(List<Face>? faces) {
+  FaceModel extractFaceInfo(List<Face>? faces) {
     // List<FaceModel>? response = [];
     FaceModel? response;
     double? smile;
@@ -226,7 +226,7 @@ class FaceDetectorPainter extends CustomPainter {
       response = faceModel;
     }
 
-    return response;
+    return faceModel;
   }
 
 
@@ -252,8 +252,8 @@ class FaceDetectorPainter extends CustomPainter {
       // if timer passed 10seconds
       // sleep so alarm
 
-    }else if(extractFaceInfo(model.faces)!.leftEyesOpen != null
-        && extractFaceInfo(model.faces)!.leftEyesOpen! >= 2.0){
+    }else if(extractFaceInfo(model.faces)!.leftEyesOpen == null
+        || extractFaceInfo(model.faces)!.leftEyesOpen! >= 2.0){
       //timer stop
       // _isstopwatchRunning = false;
       fController.stoping();
