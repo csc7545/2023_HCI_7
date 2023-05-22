@@ -53,4 +53,6 @@ extension MLKitUtils on AnalysisImage {
         return InputImageFormat.yuv420;
     }
   }
+
+
 }

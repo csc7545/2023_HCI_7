@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:animated_snack_bar/animated_snack_bar.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hp/pages/camera.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hp/utils/mlkit_utils.dart';
@@ -11,6 +13,9 @@ import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:camerawesome/pigeon.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:rxdart/rxdart.dart';
+import './camera.dart';
+import 'controller.dart';
+
 
 class MyTimer extends StatefulWidget {
   final String breakTime;
@@ -39,6 +44,15 @@ class _TimerState extends State<MyTimer> {
   int _currMax = 60;
   Timer? _timer;
   SharedPreferences? _prefs;
+
+  final fController = Get.put(faceController());
+
+
+  // late Timer _stopwatch;
+  // int _timeCount = 0;
+  // bool _isstopwatchRunning = false;
+  // List<String> _lapTimeList = [];
+  //
 
   @override
   void initState() {
@@ -113,19 +127,44 @@ class _TimerState extends State<MyTimer> {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> _storeTime() async {
-    String? curr = '';
-    curr = _prefs?.getString('time');
-    var now = new DateTime.now();
-    DateTime date = DateTime(now.year, now.month, now.day);
-    String formattedDate = "${date.day}-${date.month}-${date.year}";
-    await _prefs!.setString(
-        'time', '$curr / ${_sessionCount * _timeInt} $formattedDate');
-  }
-
-  Future<void> _resetTime() async {
-    await _prefs!.setString('time', '');
-  }
+  // void _stopwatchstart() {
+  //   _stopwatch = Timer.periodic(Duration(milliseconds: 10), (timer) {
+  //     setState(() {
+  //       _timeCount++;
+  //     });
+  //   });
+  // }
+  //
+  // void _stopwatchpause() {
+  //   _stopwatch?.cancel();
+  // }
+  //
+  // void _clickResetButton() {
+  //   setState(() {
+  //     _isRunning = false;
+  //     _stopwatch?.cancel();
+  //     _lapTimeList.clear();
+  //     _timeCount = 0;
+  //   });
+  // }
+  //
+  // void _recordLapTime(String time) {
+  //   _lapTimeList.insert(0, '${_lapTimeList.length + 1}등 $time');
+  // }
+  //
+  // Future<void> _storestopwatchTime() async {
+  //   String? curr = '';
+  //   curr = _prefs?.getString('time');
+  //   var now = new DateTime.now();
+  //   DateTime date = DateTime(now.year, now.month, now.day);
+  //   String formattedDate = "${date.day}-${date.month}-${date.year}";
+  //   await _prefs!.setString(
+  //       'time', '$curr / ${_sessionCount * _timeInt} $formattedDate');
+  // }
+  //
+  // Future<void> _resetstopwatchTime() async {
+  //   await _prefs!.setString('time', '');
+  // }
 
   @override
   void dispose() {
@@ -196,7 +235,7 @@ class _TimerState extends State<MyTimer> {
               }),
             ).show(context);
             FocusManager.instance.primaryFocus?.unfocus();
-            _storeTime();
+            // _storeTime();
             Navigator.pop(context);
           }
 
@@ -226,6 +265,7 @@ class _TimerState extends State<MyTimer> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     final int minutes = _time.inMinutes;
@@ -241,7 +281,7 @@ class _TimerState extends State<MyTimer> {
         backgroundColor: Colors.black,
         title: Text.rich(
           TextSpan(
-            text: 'Study', // text for title
+            text: fController._isstopwatchRunning  ? "학습중" : '조는중', // text for title
             style: TextStyle(
               fontSize: 24,
               color: Colors.orangeAccent,

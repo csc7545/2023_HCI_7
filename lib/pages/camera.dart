@@ -2,12 +2,18 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:hp/pages/timer.dart';
 import 'package:hp/utils/mlkit_utils.dart';
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:camerawesome/pigeon.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'controller.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key});
@@ -15,6 +21,17 @@ class CameraPage extends StatefulWidget {
   @override
   State<CameraPage> createState() => _CameraPageState();
 }
+
+final fController = Get.put(faceController());
+
+
+// var faceModel;
+late Timer _stopwatch;
+int _timeCount = 0;
+bool _isstopwatchRunning = false;
+List<String> _lapTimeList = [];
+SharedPreferences? _prefs;
+
 
 class _CameraPageState extends State<CameraPage> {
   final _faceDetectionController = BehaviorSubject<FaceDetectionModel>();
@@ -24,6 +41,8 @@ class _CameraPageState extends State<CameraPage> {
     enableClassification: true,
   );
   late final faceDetector = FaceDetector(options: options);
+
+
 
   @override
   void deactivate() {
@@ -39,6 +58,8 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
+    _stopwatchstart();
+    _stopwatchpause();
     return Scaffold(
       body: CameraAwesomeBuilder.previewOnly(
         previewFit: CameraPreviewFit.contain,
@@ -61,6 +82,8 @@ class _CameraPageState extends State<CameraPage> {
         },
       ),
     );
+
+
   }
 
   Future _analyzeImage(AnalysisImage img) async {
@@ -81,7 +104,50 @@ class _CameraPageState extends State<CameraPage> {
       debugPrint("...sending image resulted error $error");
     }
   }
+
+  void _stopwatchstart() {
+    if(_isstopwatchRunning == true)
+      _stopwatch = Timer.periodic(Duration(milliseconds: 10), (timer) {
+        setState(() {
+          _timeCount++;
+        });
+      });
+  }
+
+  void _stopwatchpause() {
+    if(_isstopwatchRunning == false)
+      _stopwatch?.cancel();
+  }
+
+  void _clickResetButton() {
+
+    setState(() {
+      _isstopwatchRunning = false;
+      _stopwatch?.cancel();
+      _lapTimeList.clear();
+      _timeCount = 0;
+    });
+  }
+
+  void _recordLapTime(String time) {
+    _lapTimeList.insert(0, '${_lapTimeList.length + 1}등 $time');
+  }
+
+  Future<void> _storestopwatchTime() async {
+    String? curr = '';
+    curr = _prefs?.getString('time');
+    var now = new DateTime.now();
+    DateTime date = DateTime(now.year, now.month, now.day);
+    String formattedDate = "${date.day}-${date.month}-${date.year}";
+    // await _prefs!.setString(
+    //     'time', '$curr / ${_sessionCount * _timeInt} $formattedDate');
+  }
+
+  Future<void> _resetstopwatchTime() async {
+    await _prefs!.setString('time', '');
+  }
 }
+
 
 class _MyPreviewDecoratorWidget extends StatelessWidget {
   final CameraState cameraState;
@@ -126,6 +192,9 @@ class _MyPreviewDecoratorWidget extends StatelessWidget {
   }
 }
 
+
+
+
 class FaceDetectorPainter extends CustomPainter {
   final FaceDetectionModel model;
   final PreviewSize previewSize;
@@ -139,11 +208,70 @@ class FaceDetectorPainter extends CustomPainter {
     required this.isBackCamera,
   });
 
+  final fController = Get.put(faceController());
+
+
+
+  FaceModel extractFaceInfo(List<Face>? faces) {
+    List<FaceModel>? response = [];
+    double? smile;
+    double? leftYears;
+    double? rightYears;
+    FaceLandmark? bottomMouth;
+    var faceModel;
+
+    for (Face face in faces!) {
+      final rect = face.boundingBox;
+      if (face.smilingProbability != null) {
+        smile = face.smilingProbability;
+      }
+
+      leftYears = face.leftEyeOpenProbability;
+      rightYears = face.rightEyeOpenProbability;
+      bottomMouth = face.landmarks[FaceLandmarkType.bottomMouth];
+
+      faceModel = FaceModel(
+          smile: smile,
+          leftEyesOpen: leftYears,
+          rightEyesOpen: rightYears,
+          bottomMouthOpen: bottomMouth
+      );
+
+      // response.add(faceModel);
+    }
+
+    return faceModel;
+  }
+
+
+
+
+
   @override
   void paint(Canvas canvas, Size size) {
     final croppedSize = model.croppedSize;
 
     final ratioAnalysisToPreview = previewSize.width / croppedSize.width;
+
+
+
+    print(" kkkk ${extractFaceInfo(model.faces).leftEyesOpen}");
+    // print(" kkkk ${extractFaceInfo(model.faces).bottomMouthOpen}");
+
+    if(extractFaceInfo(model.faces).leftEyesOpen != null
+    && extractFaceInfo(model.faces).leftEyesOpen! <= 2.0){
+      // start stopwatch
+      fController._isstopwatchRunning = true;
+      fController.starting();
+      // if timer passed 10seconds
+      // sleep so alarm
+
+    }else if(extractFaceInfo(model.faces).leftEyesOpen != null
+        && extractFaceInfo(model.faces).leftEyesOpen! >= 2.0){
+      //timer stop
+      _isstopwatchRunning = false;
+      fController.stoping();
+    }
 
     bool flipXY = false;
     if (Platform.isAndroid) {
@@ -191,6 +319,17 @@ class FaceDetectorPainter extends CustomPainter {
     }
 
     for (final Face face in model.faces) {
+      final Rect boundingBox = face.boundingBox;
+
+      final double? rotX = face.headEulerAngleX; // Head is tilted up and down rotX degrees
+      final double? rotY = face.headEulerAngleY; // Head is rotated to the right rotY degrees
+      final double? rotZ = face.headEulerAngleZ; // Head is tilted sideways rotZ degrees
+
+      // If landmark detection was enabled with FaceDetectorOptions (mouth, ears,
+      // eyes, cheeks, and nose available):
+      final FaceLandmark? leftEye = face.landmarks[FaceLandmarkType.leftEye];
+      final FaceLandmark? bottomMouth = face.landmarks[FaceLandmarkType.bottomMouth];
+
       Map<FaceContourType, Path> paths = {
         for (var fct in FaceContourType.values) fct: Path()
       };
@@ -232,6 +371,19 @@ class FaceDetectorPainter extends CustomPainter {
               ..color = Colors.orange
               ..strokeWidth = 2
               ..style = PaintingStyle.stroke);
+      }
+      if (leftEye != null) {
+        final Point<int> leftEyePos = leftEye!.position;
+      }
+
+      // If classification was enabled with FaceDetectorOptions:
+      if (face.smilingProbability != null) {
+        final double? smileProb = face.smilingProbability;
+      }
+
+      // If face tracking was enabled with FaceDetectorOptions:
+      if (face.trackingId != null) {
+        final int? id = face.trackingId;
       }
     }
   }
@@ -292,6 +444,20 @@ extension InputImageRotationConversion on InputImageRotation {
         return 270;
     }
   }
+}
+
+class FaceModel {
+  double? smile;
+  double? rightEyesOpen;
+  double? leftEyesOpen;
+  FaceLandmark? bottomMouthOpen;
+
+  FaceModel({
+    this.smile,
+    this.rightEyesOpen,
+    this.leftEyesOpen,
+    this.bottomMouthOpen,
+  });
 }
 
 class FaceDetectionModel {
