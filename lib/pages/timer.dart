@@ -281,7 +281,10 @@ class _TimerState extends State<MyTimer> {
         backgroundColor: Colors.black,
         title: Text.rich(
           TextSpan(
-            text: fController._isstopwatchRunning  ? "학습중" : '조는중', // text for title
+            text:
+            // fController._isstopwatchRunning  ?
+            // "학습중" :
+            '조는중', // text for title
             style: TextStyle(
               fontSize: 24,
               color: Colors.orangeAccent,
@@ -299,6 +302,8 @@ class _TimerState extends State<MyTimer> {
             onPressed: () {
               setState(() {
                 _resetTimer();
+                fController.stoping();
+                fController.clear();
               });
             },
           ),

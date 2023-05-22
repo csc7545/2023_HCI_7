@@ -11,8 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class faceController extends GetxController {
 
 
-  // bool _isstopwatchRunning =false;
-  RxBool isstopwatchRunning == false.obs;
+  bool _isstopwatchRunning =false;
+  // RxBool isstopwatchRunning == false.obs;
 
   late Timer _stopwatch;
   int _timeCount = 0;
@@ -20,29 +20,34 @@ class faceController extends GetxController {
   List<String> _lapTimeList = [];
   SharedPreferences? _prefs;
 
+  void clear(){
+    _timeCount = 0;
+    _isstopwatchRunning = false;
+  }
   void stoping(){
     _isstopwatchRunning = false;
-    if( _isstopwatchRunning == false)
-      _stopwatch?.cancel();
+    _stopwatchpause();
   }
+
+  void increase(){
+    _timeCount++;
+    update();
+    print("update timecount ${_timeCount}");
+  }
+
   void starting(){
     _isstopwatchRunning =true;
-    if(_isstopwatchRunning == true)
-      _stopwatch = Timer.periodic(Duration(milliseconds: 10), (timer) {
-        setState(() {
-          _timeCount++;
-        });
-      });
+    _stopwatchstart();
   }
 
 
   //
   void _stopwatchstart() {
     if(_isstopwatchRunning == true)
-      _stopwatch = Timer.periodic(Duration(milliseconds: 10), (timer) {
-        setState(() {
-          _timeCount++;
-        });
+      _stopwatch = Timer.periodic(Duration(milliseconds: 1000), (timer) {
+        // setState(() {
+        increase();
+        // });
       });
   }
 
@@ -52,3 +57,4 @@ class faceController extends GetxController {
   }
 
 }
+

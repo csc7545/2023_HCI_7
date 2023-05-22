@@ -58,8 +58,8 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-    _stopwatchstart();
-    _stopwatchpause();
+    // _stopwatchstart();
+    // _stopwatchpause();
     return Scaffold(
       body: CameraAwesomeBuilder.previewOnly(
         previewFit: CameraPreviewFit.contain,
@@ -104,48 +104,32 @@ class _CameraPageState extends State<CameraPage> {
       debugPrint("...sending image resulted error $error");
     }
   }
+  //
+  // void _stopwatchstart() {
+  //   if(_isstopwatchRunning == true)
+  //     _stopwatch = Timer.periodic(Duration(milliseconds: 10), (timer) {
+  //       setState(() {
+  //         _timeCount++;
+  //       });
+  //     });
+  // }
+  //
+  // void _stopwatchpause() {
+  //   if(_isstopwatchRunning == false)
+  //     _stopwatch?.cancel();
+  // }
+  //
+  // void _clickResetButton() {
+  //
+  //   setState(() {
+  //     _isstopwatchRunning = false;
+  //     _stopwatch?.cancel();
+  //     _lapTimeList.clear();
+  //     _timeCount = 0;
+  //   });
+  // }
 
-  void _stopwatchstart() {
-    if(_isstopwatchRunning == true)
-      _stopwatch = Timer.periodic(Duration(milliseconds: 10), (timer) {
-        setState(() {
-          _timeCount++;
-        });
-      });
-  }
 
-  void _stopwatchpause() {
-    if(_isstopwatchRunning == false)
-      _stopwatch?.cancel();
-  }
-
-  void _clickResetButton() {
-
-    setState(() {
-      _isstopwatchRunning = false;
-      _stopwatch?.cancel();
-      _lapTimeList.clear();
-      _timeCount = 0;
-    });
-  }
-
-  void _recordLapTime(String time) {
-    _lapTimeList.insert(0, '${_lapTimeList.length + 1}등 $time');
-  }
-
-  Future<void> _storestopwatchTime() async {
-    String? curr = '';
-    curr = _prefs?.getString('time');
-    var now = new DateTime.now();
-    DateTime date = DateTime(now.year, now.month, now.day);
-    String formattedDate = "${date.day}-${date.month}-${date.year}";
-    // await _prefs!.setString(
-    //     'time', '$curr / ${_sessionCount * _timeInt} $formattedDate');
-  }
-
-  Future<void> _resetstopwatchTime() async {
-    await _prefs!.setString('time', '');
-  }
 }
 
 
@@ -213,7 +197,8 @@ class FaceDetectorPainter extends CustomPainter {
 
 
   FaceModel extractFaceInfo(List<Face>? faces) {
-    List<FaceModel>? response = [];
+    // List<FaceModel>? response = [];
+    FaceModel? response;
     double? smile;
     double? leftYears;
     double? rightYears;
@@ -238,9 +223,10 @@ class FaceDetectorPainter extends CustomPainter {
       );
 
       // response.add(faceModel);
+      response = faceModel;
     }
 
-    return faceModel;
+    return response;
   }
 
 
@@ -261,7 +247,7 @@ class FaceDetectorPainter extends CustomPainter {
     if(extractFaceInfo(model.faces).leftEyesOpen != null
     && extractFaceInfo(model.faces).leftEyesOpen! <= 2.0){
       // start stopwatch
-      fController._isstopwatchRunning = true;
+      // fController>()._isstopwatchRunning = true;
       fController.starting();
       // if timer passed 10seconds
       // sleep so alarm
@@ -269,7 +255,7 @@ class FaceDetectorPainter extends CustomPainter {
     }else if(extractFaceInfo(model.faces).leftEyesOpen != null
         && extractFaceInfo(model.faces).leftEyesOpen! >= 2.0){
       //timer stop
-      _isstopwatchRunning = false;
+      // _isstopwatchRunning = false;
       fController.stoping();
     }
 
