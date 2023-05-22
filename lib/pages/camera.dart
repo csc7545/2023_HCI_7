@@ -196,7 +196,7 @@ class FaceDetectorPainter extends CustomPainter {
 
 
 
-  FaceModel extractFaceInfo(List<Face>? faces) {
+  FaceModel? extractFaceInfo(List<Face>? faces) {
     // List<FaceModel>? response = [];
     FaceModel? response;
     double? smile;
@@ -241,19 +241,19 @@ class FaceDetectorPainter extends CustomPainter {
 
 
 
-    print(" kkkk ${extractFaceInfo(model.faces).leftEyesOpen}");
+    print(" kkkk ${extractFaceInfo(model.faces)?.leftEyesOpen}");
     // print(" kkkk ${extractFaceInfo(model.faces).bottomMouthOpen}");
 
-    if(extractFaceInfo(model.faces).leftEyesOpen != null
-    && extractFaceInfo(model.faces).leftEyesOpen! <= 2.0){
+    if(extractFaceInfo(model.faces)!.leftEyesOpen != null
+    && extractFaceInfo(model.faces)!.leftEyesOpen! <= 2.0){
       // start stopwatch
       // fController>()._isstopwatchRunning = true;
       fController.starting();
       // if timer passed 10seconds
       // sleep so alarm
 
-    }else if(extractFaceInfo(model.faces).leftEyesOpen != null
-        && extractFaceInfo(model.faces).leftEyesOpen! >= 2.0){
+    }else if(extractFaceInfo(model.faces)!.leftEyesOpen != null
+        && extractFaceInfo(model.faces)!.leftEyesOpen! >= 2.0){
       //timer stop
       // _isstopwatchRunning = false;
       fController.stoping();
