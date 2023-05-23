@@ -178,9 +178,6 @@ class _MyPreviewDecoratorWidget extends StatelessWidget {
   }
 }
 
-
-
-
 class FaceDetectorPainter extends CustomPainter {
   final FaceDetectionModel model;
   final PreviewSize previewSize;
@@ -241,8 +238,6 @@ class FaceDetectorPainter extends CustomPainter {
     final croppedSize = model.croppedSize;
 
     final ratioAnalysisToPreview = previewSize.width / croppedSize.width;
-
-
 
     print(" kkkk ${extractFaceInfo(model.faces).leftEyesOpen}");
     // print(" kkkk ${extractFaceInfo(model.faces).bottomMouthOpen}");
