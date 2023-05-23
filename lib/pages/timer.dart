@@ -13,12 +13,14 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:hp/pages/camera.dart';
+import 'package:hp/pages/rounded_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hp/utils/mlkit_utils.dart';
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:camerawesome/pigeon.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 class ReactiveController extends GetxController {
   RxInt counter = 0.obs;
@@ -37,9 +39,9 @@ class MyTimer extends StatefulWidget {
 
   const MyTimer(
       {Key? key,
-      required this.breakTime,
-      required this.workTime,
-      required this.workSessions})
+        required this.breakTime,
+        required this.workTime,
+        required this.workSessions})
       : super(key: key);
 
   @override
@@ -62,10 +64,35 @@ class _TimerState extends State<MyTimer> {
   int _seconds = 0;
   bool _checktimer = false;
   late Timer _timecheck;
+  final _isHours = true;
+
+  final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+    mode: StopWatchMode.countUp,
+    onChange: (value) => print('onChange $value'),
+    onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+    onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
+    onStopped: () {
+      print('onStop');
+    },
+    onEnded: () {
+      print('onEnded');
+    },
+  );
+
+  final _scrollController = ScrollController();
+
 
   @override
   void initState() {
     super.initState();
+    _stopWatchTimer.rawTime.listen((value) =>
+        print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
+    _stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
+    _stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
+    _stopWatchTimer.records.listen((value) => print('records $value'));
+    _stopWatchTimer.fetchStopped
+        .listen((value) => print('stopped from stream'));
+    _stopWatchTimer.fetchEnded.listen((value) => print('ended from stream'));
     try {
       if (widget.breakTime == '0') {
         throw Exception('Break time cannot be 0');
@@ -150,9 +177,10 @@ class _TimerState extends State<MyTimer> {
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     _timer?.cancel();
     super.dispose();
+    await _stopWatchTimer.dispose();
   }
 
   void _startTimer() async {
@@ -231,7 +259,7 @@ class _TimerState extends State<MyTimer> {
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
                 contentTextStyle:
-                    const TextStyle(fontSize: 16, color: Colors.white),
+                const TextStyle(fontSize: 16, color: Colors.white),
                 actions: [
                   CleanDialogActionButtons(
                     actionTitle: 'Cancel',
@@ -370,50 +398,79 @@ class _TimerState extends State<MyTimer> {
                         ),
                       ),
                     ),
-                    // Positioned(
-                    //   bottom: 100,
-                    //   left: 130,
-                    //   child: GetX<ReactiveController>( // 반응형 상태관리 - 1
-                    //   builder: (controller) {
-                    //     return ElevatedButton(
-                    //       child: Text(
-                    //         '반응형 1 / 현재 숫자: ${controller.counter.value}', // .value 로 접근
-                    //       ),
-                    //       onPressed: () {
-                    //         controller.increase(_seconds);
-                    //         print('$_seconds');
-                    //         // Get.find<ReactiveController>().increase();
-                    //       },
-                    //     );
-                    //   },
-                    // ),),
                     Positioned(
-                      bottom: 150,
+                      bottom: 50,
                       left: 130,
-                      child: Row(
-                        children: [
-                          TextButton(onPressed: (){
-                            //print(_ischeck);
-                            _startcheckTimer();
-                            setState(() {
-                              _ischeck = !_ischeck;
-                              _ischeck? print(_seconds) : print('false');
-                            });
-                          }, child: Text('+10')),
-                          TextButton(onPressed: (){
-                            if(_seconds % 10 == 0){
-                              print('10dmlqotn');
-                              //++_timerCount;
-                            }
-                            else{
-                              print('10xxxxxxx');
-                            }
-                            print('$_timerCount');
-                            print('$_seconds');
-                            },
-                              child: Text('check'))
-                        ],
-                      )
+                      child: StreamBuilder<int>(
+                        stream: _stopWatchTimer.secondTime,
+                        initialData: _stopWatchTimer.secondTime.value,
+                        builder: (context, snap) {
+                          final value = snap.data;
+                          String strsec = value.toString();
+                          int sec = int.parse(strsec);
+                          if(sec % 10 ==0){
+                            _timerCount++;
+                            print("hhhhhh123121321321321321321313132132132132123:$_timerCount");
+                            print(sec);
+                            //_stopWatchTimer.onStopTimer();
+                          }
+                          if(sec == 20){
+                            print(_timerCount);
+                            _stopWatchTimer.onStopTimer();
+                          }
+                          print('Listen every second. $value');
+                          return Column(
+                            children: <Widget>[
+                              Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 4),
+                                        child: Text(
+                                          'second',
+                                          style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 17,
+                                            fontFamily: 'Helvetica',
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                        const EdgeInsets.symmetric(horizontal: 4),
+                                        child: Text(
+                                          value.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 30,
+                                            fontFamily: 'Helvetica',
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            ],
+                          );
+                        },
+                      ),),
+                    Positioned(
+                        bottom: 150,
+                        left: 130,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: RoundedButton(
+                            color: Colors.lightBlue,
+                            onTap: _stopWatchTimer.onStartTimer,
+                            child: const Text(
+                              'Start',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
                     ),
                   ],
                 ),
@@ -438,7 +495,7 @@ class _TimerState extends State<MyTimer> {
                   }
                   _isRunning = !_isRunning;
                 }
-                //if
+                  //if
                 );
               },
               shape: const CircleBorder(),
