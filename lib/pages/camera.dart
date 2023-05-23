@@ -60,8 +60,6 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-    // _stopwatchstart();
-    // _stopwatchpause();
     return Scaffold(
       body: CameraAwesomeBuilder.previewOnly(
         previewFit: CameraPreviewFit.cover,

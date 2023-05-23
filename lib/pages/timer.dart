@@ -1,5 +1,3 @@
-
-
 import 'package:clean_dialog/clean_dialog.dart';
 import 'package:emerge_alert_dialog/emerge_alert_dialog.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +25,9 @@ import 'controller.dart';
 class ReactiveController extends GetxController {
   RxInt counter = 0.obs;
   RxInt _timercnt = 0.obs;
+
   void increase(int time) {
-    if(time % 10 == 0){
+    if (time % 10 == 0) {
       counter++;
     }
   }
@@ -41,9 +40,9 @@ class MyTimer extends StatefulWidget {
 
   const MyTimer(
       {Key? key,
-        required this.breakTime,
-        required this.workTime,
-        required this.workSessions})
+      required this.breakTime,
+      required this.workTime,
+      required this.workSessions})
       : super(key: key);
 
   @override
@@ -52,7 +51,7 @@ class MyTimer extends StatefulWidget {
 
 class _TimerState extends State<MyTimer> {
   bool _isRunning = false;
-  bool _ischeck = false;
+  bool _isTimerFinished = false;
   Duration _time = const Duration(minutes: 60);
   Duration _break = const Duration(minutes: 10);
   Duration _checktime = const Duration(minutes: 10);
@@ -116,11 +115,11 @@ class _TimerState extends State<MyTimer> {
             padding: const EdgeInsets.all(8),
             color: Colors.redAccent,
             height: 65,
-            child: Flex(
+            child: const Flex(
               direction: Axis.vertical,
               children: [
                 Row(
-                  children: const [
+                  children: [
                     Icon(
                       Icons.close,
                       size: 30,
@@ -138,7 +137,7 @@ class _TimerState extends State<MyTimer> {
                   ],
                 ),
                 Row(
-                  children: const [
+                  children: [
                     SizedBox(width: 50),
                     // Add some horizontal spacing to align the text with the first message
                     Text(
@@ -210,8 +209,8 @@ class _TimerState extends State<MyTimer> {
                   height: 65,
                   child: Column(
                     children: [
-                      Row(
-                        children: const [
+                      const Row(
+                        children: [
                           Icon(
                             Icons.check_circle_outline,
                             size: 30,
@@ -234,7 +233,7 @@ class _TimerState extends State<MyTimer> {
                           // Add some horizontal spacing to align the text with the first message
                           Text(
                             'You logged ${_sessionCount * _timeInt} minutes.',
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 14,
                               fontFamily: 'Arial',
@@ -262,7 +261,7 @@ class _TimerState extends State<MyTimer> {
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
                 contentTextStyle:
-                const TextStyle(fontSize: 16, color: Colors.white),
+                    const TextStyle(fontSize: 16, color: Colors.white),
                 actions: [
                   CleanDialogActionButtons(
                     actionTitle: 'Cancel',
@@ -306,70 +305,11 @@ class _TimerState extends State<MyTimer> {
 
   void _startcheckTimer() {
     _checktimer = true;
-    _timecheck = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timecheck = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _seconds++;
       });
     });
-  }
-
-  stopwatchtimer(){
-    StreamBuilder<int>(
-      stream: _stopWatchTimer.secondTime,
-      initialData: _stopWatchTimer.secondTime.value,
-      builder: (context, snap) {
-        final value = snap.data;
-        String strsec = value.toString();
-        int sec = int.parse(strsec);
-        if(sec % 10 ==0){
-          _timerCount++;
-          print("hhhhhh123121321321321321321313132132132132123:$_timerCount");
-          print(sec);
-          //_stopWatchTimer.onStopTimer();
-        }
-        if(sec == 20){
-          print(_timerCount);
-          _stopWatchTimer.onStopTimer();
-        }
-        print('Listen every second. $value');
-        return Column(
-          children: <Widget>[
-            Padding(
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        'second',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 17,
-                          fontFamily: 'Helvetica',
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 4),
-                      child: Text(
-                        value.toString(),
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 30,
-                          fontFamily: 'Helvetica',
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -378,15 +318,17 @@ class _TimerState extends State<MyTimer> {
     final int minutes = _time.inMinutes;
     final int seconds = _time.inSeconds % 60;
     String timerState = "Break";
-    if (_timerCount % 2 == 0) {
+
+    if (fController.getFlag() == false) {
       timerState = '$_counter / $_sessionCount';
     }
+
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
           centerTitle: false,
           backgroundColor: Colors.black,
-          title: Text.rich(
+          title: const Text.rich(
             TextSpan(
               text: 'Study', // text for title
               style: TextStyle(
@@ -406,6 +348,7 @@ class _TimerState extends State<MyTimer> {
               onPressed: () {
                 setState(() {
                   _resetTimer();
+                  _stopWatchTimer.clearPresetTime();
                 });
               },
             ),
@@ -415,8 +358,8 @@ class _TimerState extends State<MyTimer> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Flexible(
-                flex: 1,
+              const Flexible(
+                flex: 2,
                 fit: FlexFit.tight,
                 child: CameraPage(),
               ),
@@ -460,82 +403,45 @@ class _TimerState extends State<MyTimer> {
                         ),
                       ),
                     ),
-                    Positioned(
-                      bottom: 50,
-                      left: 130,
-                      child: StreamBuilder<int>(
-                        stream: _stopWatchTimer.secondTime,
-                        initialData: _stopWatchTimer.secondTime.value,
-                        builder: (context, snap) {
-                          final value = snap.data;
-                          String strsec = value.toString();
-                          int sec = int.parse(strsec);
-                          if(sec % 10 ==0){
-                            _timerCount++;
-                            print("hhhhhh123121321321321321321313132132132132123:$_timerCount");
-                            print(sec);
-                            //_stopWatchTimer.onStopTimer();
-                          }
-                          if(sec == 20){
-                            print(_timerCount);
-                            _stopWatchTimer.onStopTimer();
-                            fController._isstopwatchRunning == false as RxBool?_stopWatchTimer.onStopTimer() : null;
-                          }
-                          print('Listen every second. $value');
-                          return Container();
-                           /* Column(
-                            children: <Widget>[
-                              Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 4),
-                                        child: Text(
-                                          'second',
-                                          style: TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 17,
-                                            fontFamily: 'Helvetica',
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                        const EdgeInsets.symmetric(horizontal: 4),
-                                        child: Text(
-                                          value.toString(),
-                                          style: const TextStyle(
-                                            color: Colors.red,
-                                            fontSize: 30,
-                                            fontFamily: 'Helvetica',
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                            ],
-                          );*/
-                        },
-                      ),),
-                    Positioned(
-                      bottom: 150,
-                      left: 130,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: RoundedButton(
-                          color: Colors.lightBlue,
-                          onTap: _stopWatchTimer.onStartTimer,
-                          child: const Text(
-                            'Start',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                    _isRunning
+                        ? Positioned(
+                            // 타이머가 시작돼야지 눈 감고 뜨는거 구분하기 시작함
+                            bottom: 50,
+                            left: 130,
+                            child: StreamBuilder<int>(
+                              stream: _stopWatchTimer.secondTime,
+                              initialData: _stopWatchTimer.secondTime.value,
+                              builder: (context, snap) {
+                                final value = snap.data;
+                                print('Listen every second. $value');
+                                if (fController.getFlag() == true) {
+                                  _stopWatchTimer.onStartTimer();
+                                  // if (value! % 10 == 0 && value != 0) {
+                                  //   _timerCount++; // 조는거
+                                  // }
+                                  if (value == 5) {
+                                    _isRunning = false;
+                                    _isTimerFinished = true;
+                                    fController.OnVibration();
+                                    fController.changeFlag();
+                                    _stopWatchTimer.onStopTimer();
+                                    _stopWatchTimer.clearPresetTime();
+                                  }
+                                }
+                                return Container();
+                              },
+                            ),
+                          )
+                        : Container(),
+                    _isTimerFinished ? Center(
+                      child: EmergeAlertDialog(
+                        alignment: Alignment.bottomRight,
+                        emergeAlertDialogOptions: EmergeAlertDialogOptions(
+                          title: const Text("Privacy Info"),
+                          content: _content(),
                         ),
                       ),
-                    ),
+                    ) : Container(),
                   ],
                 ),
               ),
@@ -544,22 +450,19 @@ class _TimerState extends State<MyTimer> {
         ),
         floatingActionButton: Row(
           children: [
-            TextButton(
-              onPressed: () => _showMyDialog(context),
-              child: const Text("Show PopUp"),
-            ),
             FloatingActionButton(
               onPressed: () {
-                setState(() {
-
-                  if (_isRunning) {
-                    _stopTimer();
-                  } else {
-                    _startTimer();
-                  }
-                  _isRunning = !_isRunning;
-                }
-                  //if
+                setState(
+                  () {
+                    if (_isRunning) {
+                      _stopTimer();
+                      _stopWatchTimer.onStopTimer();
+                      _stopWatchTimer.clearPresetTime();
+                    } else {
+                      _startTimer();
+                    }
+                    _isRunning = !_isRunning;
+                  },
                 );
               },
               shape: const CircleBorder(),
@@ -572,21 +475,6 @@ class _TimerState extends State<MyTimer> {
           ],
         ));
   }
-  Future<void> _showMyDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return EmergeAlertDialog(
-          alignment: Alignment.bottomRight,
-          emergeAlertDialogOptions: EmergeAlertDialogOptions(
-            title: const Text("Privacy Info"),
-            content: _content(),
-          ),
-        );
-      },
-    );
-  }
 
   Widget _content() {
     final size = MediaQuery.of(context).size;
@@ -594,7 +482,7 @@ class _TimerState extends State<MyTimer> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Image.asset("assets/images/stretch.jpg"),
+          Image.asset("assets/stretch.jpeg"),
           const SizedBox(height: 22.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -634,6 +522,4 @@ class _TimerState extends State<MyTimer> {
       ),
     );
   }
-
 }
-
