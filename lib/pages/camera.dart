@@ -39,6 +39,8 @@ class _CameraPageState extends State<CameraPage> {
   final options = FaceDetectorOptions(
     enableContours: true,
     enableClassification: true,
+    enableLandmarks: true,
+    enableTracking: true,
   );
   late final faceDetector = FaceDetector(options: options);
 
@@ -219,7 +221,8 @@ class FaceDetectorPainter extends CustomPainter {
           smile: smile,
           leftEyesOpen: leftYears,
           rightEyesOpen: rightYears,
-          bottomMouthOpen: bottomMouth
+          bottomMouthOpen: bottomMouth,
+
       );
 
       // response.add(faceModel);
@@ -241,22 +244,27 @@ class FaceDetectorPainter extends CustomPainter {
 
 
 
-    print(" kkkk ${extractFaceInfo(model.faces)?.leftEyesOpen}");
+    print(" kkkk ${extractFaceInfo(model.faces).leftEyesOpen}");
     // print(" kkkk ${extractFaceInfo(model.faces).bottomMouthOpen}");
 
-    if(extractFaceInfo(model.faces)!.leftEyesOpen != null
-    && extractFaceInfo(model.faces)!.leftEyesOpen! <= 2.0){
-      // start stopwatch
-      // fController>()._isstopwatchRunning = true;
+    if(extractFaceInfo(model.faces).leftEyesOpen != null
+        || extractFaceInfo(model.faces).leftEyesOpen! >= 2.0){
+      print('lookat eyeopen');
       fController.starting();
-      // if timer passed 10seconds
-      // sleep so alarm
-
-    }else if(extractFaceInfo(model.faces)!.leftEyesOpen == null
-        || extractFaceInfo(model.faces)!.leftEyesOpen! >= 2.0){
       //timer stop
       // _isstopwatchRunning = false;
-      fController.stoping();
+
+    }else if(extractFaceInfo(model.faces).leftEyesOpen != null
+      && extractFaceInfo(model.faces).leftEyesOpen! <= 2.0){
+        // start stopwatch
+        // fController>()._isstopwatchRunning = true;
+
+        fController.stoping();
+        print('lookat eyeclose');
+
+        // if timer passed 10seconds
+        // sleep so alarm
+
     }
 
     bool flipXY = false;
@@ -360,11 +368,18 @@ class FaceDetectorPainter extends CustomPainter {
       }
       if (leftEye != null) {
         final Point<int> leftEyePos = leftEye!.position;
+        print('leftEyePos: ${leftEyePos}');
       }
+
+      if (bottomMouth != null) {
+              final Point<int> bottomMouthPos = bottomMouth!.position;
+              print('bottomMouthPos: ${bottomMouthPos}');
+            }
 
       // If classification was enabled with FaceDetectorOptions:
       if (face.smilingProbability != null) {
         final double? smileProb = face.smilingProbability;
+        print('smileProb: ${smileProb}');
       }
 
       // If face tracking was enabled with FaceDetectorOptions:

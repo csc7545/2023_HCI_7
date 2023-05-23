@@ -45,12 +45,11 @@ class faceController extends GetxController {
   }
 
 
-
   void _stopwatchstart() {
     if(_isstopwatchRunning == true)
       _stopwatch = Timer.periodic(Duration(seconds: 100000), (timer) {
         // setState(() {
-        increase();
+        // increase();
         // });
       });
   }
