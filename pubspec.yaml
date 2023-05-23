@@ -50,6 +50,7 @@ dependencies:
   clean_dialog: ^0.0.16
   emerge_alert_dialog: ^0.0.3
   get: ^4.6.5
+  stop_watch_timer: ^2.0.0
 
 
 
