@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:stop_watch_timer/stop_watch_timer.dart';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -11,14 +12,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 class faceController extends GetxController {
 
 
-  bool _isstopwatchRunning =false;
+  bool _isstopwatchRunning = false;
   // RxBool isstopwatchRunning == false.obs;
 
-  late Timer _stopwatch;
+  late Timer _stopwatch = Timer.periodic(Duration(seconds: 1), (timer){});
   int _timeCount = 0;
   // bool _isstopwatchRunning = false;
   List<String> _lapTimeList = [];
   SharedPreferences? _prefs;
+
+
 
   void clear(){
     _timeCount = 0;
@@ -29,7 +32,6 @@ class faceController extends GetxController {
 
   void stoping(){
     _isstopwatchRunning = false;
-    _stopwatchpause();
     update();
   }
 
@@ -41,7 +43,7 @@ class faceController extends GetxController {
 
   void starting(){
     _isstopwatchRunning =true;
-    _stopwatchstart();
+    update();
   }
 
 
@@ -59,6 +61,8 @@ class faceController extends GetxController {
       _stopwatch!.cancel();
     update();
   }
+
+
 
 }
 
