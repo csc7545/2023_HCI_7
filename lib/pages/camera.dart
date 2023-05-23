@@ -64,7 +64,7 @@ class _CameraPageState extends State<CameraPage> {
     // _stopwatchpause();
     return Scaffold(
       body: CameraAwesomeBuilder.previewOnly(
-        previewFit: CameraPreviewFit.contain,
+        previewFit: CameraPreviewFit.cover,
         aspectRatio: CameraAspectRatios.ratio_1_1,
         sensor: Sensors.front,
         onImageForAnalysis: (img) => _analyzeImage(img),
@@ -250,6 +250,7 @@ class FaceDetectorPainter extends CustomPainter {
     if(extractFaceInfo(model.faces).leftEyesOpen != null
         || extractFaceInfo(model.faces).leftEyesOpen! >= 2.0){
       print('lookat eyeopen');
+      fController.changeFlag();
       fController.starting();
       //timer stop
       // _isstopwatchRunning = false;
