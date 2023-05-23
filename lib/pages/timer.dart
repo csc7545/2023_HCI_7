@@ -381,6 +381,9 @@ class _TimerState extends State<MyTimer> {
     if (_timerCount % 2 == 0) {
       timerState = '$_counter / $_sessionCount';
     }
+
+
+
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
@@ -388,7 +391,7 @@ class _TimerState extends State<MyTimer> {
           backgroundColor: Colors.black,
           title: Text.rich(
             TextSpan(
-              text: 'Study', // text for title
+              text: fController.isflag == true ? 'True' : 'False', // text for title
               style: TextStyle(
                 fontSize: 24,
                 color: Colors.orangeAccent,
@@ -464,7 +467,7 @@ class _TimerState extends State<MyTimer> {
                       bottom: 50,
                       left: 130,
                       child:
-                      // fController.isflag == true ?
+                      // fController.isflag == true ? Text('True') : Text('False'),
                       StreamBuilder<int>(
                         stream: _stopWatchTimer.secondTime,
                         initialData: _stopWatchTimer.secondTime.value,
@@ -473,13 +476,16 @@ class _TimerState extends State<MyTimer> {
                           final value = snap.data;
                           String strsec = value.toString();
                           int sec = int.parse(strsec);
+
+                          print(fController.isflag == true ? 'streamvuilder True' : 'streamvuilder False');
+
                           if(sec % 10 ==0){
                             _timerCount++;
                             print("hhhhhh123121321321321321321313132132132132123:$_timerCount");
                             print(sec);
                             //_stopWatchTimer.onStopTimer();
                           }
-                          fController.isflag == true ? _stopWatchTimer.onStopTimer() : null;
+                          fController.isflag == false ? _stopWatchTimer.onStopTimer() : null;
                           print("end stop count ${_timerCount}");
                           // if(sec == 20){
                           //   print(_timerCount);
@@ -527,8 +533,8 @@ class _TimerState extends State<MyTimer> {
 
                         },
                       )
-                            // :Container()
-                ,),
+                           /* :Container() */
+                ),
                     Positioned(
                       bottom: 150,
                       left: 130,

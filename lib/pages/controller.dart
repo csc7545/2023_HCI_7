@@ -15,12 +15,6 @@ class faceController extends GetxController {
   bool _isstopwatchRunning = false;
   // RxBool isstopwatchRunning == false.obs;
 
-  late Timer _stopwatch = Timer.periodic(Duration(seconds: 1), (timer){});
-  int _timeCount = 0;
-  // bool _isstopwatchRunning = false;
-  List<String> _lapTimeList = [];
-  SharedPreferences? _prefs;
-
 
   bool isflag(){
     print("isflag  ${_isstopwatchRunning}");
@@ -30,12 +24,9 @@ class faceController extends GetxController {
   }
 
 
-
-
   void clear(){
-    _timeCount = 0;
+    // _timeCount = 0;
     _isstopwatchRunning = false;
-    _stopwatchpause();
     dispose();
   }
 
@@ -45,34 +36,12 @@ class faceController extends GetxController {
     print("stoping  ${_isstopwatchRunning}");
   }
 
-  void increase(){
-    _timeCount++;
-    update();
-    print("update timecount ${_timeCount}");
-  }
 
   void starting(){
     _isstopwatchRunning =true;
     update();
     print("starting  ${_isstopwatchRunning}");
   }
-
-
-  void _stopwatchstart() {
-    if(_isstopwatchRunning == true)
-      _stopwatch = Timer.periodic(Duration(seconds: 100000), (timer) {
-        // setState(() {
-        // increase();
-        // });
-      });
-  }
-
-  void _stopwatchpause() {
-    if(_isstopwatchRunning == false)
-      _stopwatch!.cancel();
-    update();
-  }
-
 
 
 }
