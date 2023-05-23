@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:hp/pages/timer.dart';
+
 import 'package:hp/utils/mlkit_utils.dart';
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:camerawesome/pigeon.dart';
@@ -22,7 +22,7 @@ class CameraPage extends StatefulWidget {
   State<CameraPage> createState() => _CameraPageState();
 }
 
-final fController = Get.put(faceController());
+
 
 
 // var faceModel;
@@ -198,7 +198,7 @@ class FaceDetectorPainter extends CustomPainter {
 
 
 
-  FaceModel extractFaceInfo(List<Face>? faces) {
+   extractFaceInfo(List<Face>? faces) {
     // List<FaceModel>? response = [];
     FaceModel? response;
     double? smile;
@@ -243,29 +243,32 @@ class FaceDetectorPainter extends CustomPainter {
     final ratioAnalysisToPreview = previewSize.width / croppedSize.width;
 
 
-
-    print(" kkkk ${extractFaceInfo(model.faces).leftEyesOpen}");
+  if(extractFaceInfo(model.faces)?.leftEyesOpen!=null) {
+    print(" kkkk ${extractFaceInfo(model.faces)?.leftEyesOpen}");
     // print(" kkkk ${extractFaceInfo(model.faces).bottomMouthOpen}");
 
-    if(extractFaceInfo(model.faces).leftEyesOpen != null
-        || extractFaceInfo(model.faces).leftEyesOpen! >= 2.0){
+
+    if(extractFaceInfo(model.faces).leftEyesOpen >=(0.2)){
       print('lookat eyeopen');
-      fController.starting();
+      fController.stoping();
       //timer stop
-      // _isstopwatchRunning = false;
+      // _stopWatchTimer.onStartTimer;
+      // fController._isstopwatchRunning = false;
 
-    }else if(extractFaceInfo(model.faces).leftEyesOpen != null
-      && extractFaceInfo(model.faces).leftEyesOpen! <= 2.0){
-        // start stopwatch
-        // fController>()._isstopwatchRunning = true;
+    }else if(extractFaceInfo(model.faces).leftEyesOpen <=(0.2)){
+      // start stopwatch
+      // fController>()._isstopwatchRunning = true;
+      fController.starting();
 
-        fController.stoping();
-        print('lookat eyeclose');
+      print('lookat eyeclose');
 
-        // if timer passed 10seconds
-        // sleep so alarm
+      // if timer passed 10seconds
+      // sleep so alarm
 
     }
+
+  }
+
 
     bool flipXY = false;
     if (Platform.isAndroid) {
