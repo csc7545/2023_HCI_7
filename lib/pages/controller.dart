@@ -22,6 +22,15 @@ class faceController extends GetxController {
   SharedPreferences? _prefs;
 
 
+  bool isflag(){
+    print("isflag  ${_isstopwatchRunning}");
+    return _isstopwatchRunning ;
+
+
+  }
+
+
+
 
   void clear(){
     _timeCount = 0;
@@ -33,6 +42,7 @@ class faceController extends GetxController {
   void stoping(){
     _isstopwatchRunning = false;
     update();
+    print("stoping  ${_isstopwatchRunning}");
   }
 
   void increase(){
@@ -44,6 +54,7 @@ class faceController extends GetxController {
   void starting(){
     _isstopwatchRunning =true;
     update();
+    print("starting  ${_isstopwatchRunning}");
   }
 
 

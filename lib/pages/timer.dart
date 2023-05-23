@@ -463,10 +463,13 @@ class _TimerState extends State<MyTimer> {
                     Positioned(
                       bottom: 50,
                       left: 130,
-                      child: StreamBuilder<int>(
+                      child:
+                      // fController.isflag == true ?
+                      StreamBuilder<int>(
                         stream: _stopWatchTimer.secondTime,
                         initialData: _stopWatchTimer.secondTime.value,
                         builder: (context, snap) {
+                          fController.isflag;
                           final value = snap.data;
                           String strsec = value.toString();
                           int sec = int.parse(strsec);
@@ -476,11 +479,13 @@ class _TimerState extends State<MyTimer> {
                             print(sec);
                             //_stopWatchTimer.onStopTimer();
                           }
-                          if(sec == 20){
-                            print(_timerCount);
-                            _stopWatchTimer.onStopTimer();
-                            fController._isstopwatchRunning == false as RxBool?_stopWatchTimer.onStopTimer() : null;
-                          }
+                          fController.isflag == true ? _stopWatchTimer.onStopTimer() : null;
+                          print("end stop count ${_timerCount}");
+                          // if(sec == 20){
+                          //   print(_timerCount);
+                          //   _stopWatchTimer.onStopTimer();
+                          //
+                          // }
                           print('Listen every second. $value');
                           return Container();
                            /* Column(
@@ -519,8 +524,11 @@ class _TimerState extends State<MyTimer> {
                                   )),
                             ],
                           );*/
+
                         },
-                      ),),
+                      )
+                            // :Container()
+                ,),
                     Positioned(
                       bottom: 150,
                       left: 130,
